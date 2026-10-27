@@ -23,10 +23,11 @@
 </form>
 </main>
 <script>
-const salt='1c32033522b26bc57be39f7d35c5c121',verifier='a72b11c2155f7d96c7bb080436394dac70773aedc9b09fc691c26d6b7a4b1643',iterations=210000,storageKey='game-workbench-demo-access';
-function unlock(){document.querySelector('#gate').remove();const frame=document.createElement('iframe');frame.title='The Lantern & Thorn, playable RPG demo';frame.src='game.html'+location.search+location.hash;frame.allow='autoplay; fullscreen; gamepad';frame.allowFullscreen=true;document.body.append(frame);try{sessionStorage.setItem(storageKey,verifier)}catch{}}
-let remembered=false;try{remembered=sessionStorage.getItem(storageKey)===verifier}catch{}if(remembered)unlock();
-document.querySelector('#access')?.addEventListener('submit',async event=>{event.preventDefault();const button=document.querySelector('#play'),status=document.querySelector('#status');button.disabled=true;status.textContent='Checking passcode…';try{if(!crypto.subtle)throw Error('Open this page over HTTPS in a current browser.');const key=await crypto.subtle.importKey('raw',new TextEncoder().encode(document.querySelector('#passcode').value),'PBKDF2',false,['deriveBits']);const bytes=Uint8Array.from(salt.match(/../g),part=>parseInt(part,16));const result=await crypto.subtle.deriveBits({name:'PBKDF2',salt:bytes,iterations,hash:'SHA-256'},key,256);const actual=Array.from(new Uint8Array(result),byte=>byte.toString(16).padStart(2,'0')).join('');let mismatch=0;for(let i=0;i<verifier.length;i++)mismatch|=actual.charCodeAt(i)^verifier.charCodeAt(i);if(mismatch){status.textContent='That passcode didn’t match. Try again.';document.querySelector('#passcode').focus()}else unlock()}catch(error){status.textContent=error.message||'Please try again in a current browser.'}finally{if(document.body.contains(button))button.disabled=false}});
+const PLAYTEST_PASSCODE = 'azamplays';
+const storageKey = 'game-workbench-demo-access';
+function unlock(){document.querySelector('#gate').remove();const frame=document.createElement('iframe');frame.title='The Lantern & Thorn, playable RPG demo';frame.src='game.html'+location.search+location.hash;frame.allow='autoplay; fullscreen; gamepad';frame.allowFullscreen=true;document.body.append(frame);try{sessionStorage.setItem(storageKey,PLAYTEST_PASSCODE)}catch{}}
+let remembered=false;try{remembered=sessionStorage.getItem(storageKey)===PLAYTEST_PASSCODE}catch{}if(remembered)unlock();
+document.querySelector('#access')?.addEventListener('submit',event=>{event.preventDefault();const status=document.querySelector('#status');if(document.querySelector('#passcode').value===PLAYTEST_PASSCODE){unlock()}else{status.textContent='That passcode didn’t match. Try again.';document.querySelector('#passcode').focus()}});
 </script>
 </body>
 </html>
