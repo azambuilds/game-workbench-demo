@@ -25,7 +25,7 @@
 <script>
 const PLAYTEST_PASSCODE = 'azamplays';
 const storageKey = 'game-workbench-demo-access';
-function unlock(){document.querySelector('#gate').remove();const frame=document.createElement('iframe');frame.title='The Lantern & Thorn, playable RPG demo';frame.src='game.html'+location.search+location.hash;frame.allow='autoplay; fullscreen; gamepad';frame.allowFullscreen=true;document.body.append(frame);try{sessionStorage.setItem(storageKey,PLAYTEST_PASSCODE)}catch{}}
+function unlock(){document.querySelector('#gate').remove();const frame=document.createElement('iframe');frame.title='The Lantern & Thorn, playable RPG demo';const url=new URL('game.html',location.href);url.search=location.search;url.searchParams.set('preview',Date.now().toString());url.hash=location.hash;frame.src=url.href;frame.allow='autoplay; fullscreen; gamepad';frame.allowFullscreen=true;document.body.append(frame);try{sessionStorage.setItem(storageKey,PLAYTEST_PASSCODE)}catch{}}
 let remembered=false;try{remembered=sessionStorage.getItem(storageKey)===PLAYTEST_PASSCODE}catch{}if(remembered)unlock();
 document.querySelector('#access')?.addEventListener('submit',event=>{event.preventDefault();const status=document.querySelector('#status');if(document.querySelector('#passcode').value===PLAYTEST_PASSCODE){unlock()}else{status.textContent='That passcode didn’t match. Try again.';document.querySelector('#passcode').focus()}});
 </script>
